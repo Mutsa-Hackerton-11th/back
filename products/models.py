@@ -1,5 +1,7 @@
 from django.db import models
 
+from sellers.models import Seller
+
 
 # Category 클래스 : 카테고리 테이블
 class Category(models.Model):
@@ -22,7 +24,7 @@ class Product(models.Model):
     stars = models.IntegerField()
     liked = models.DecimalField(max_digits=2,decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    #기업회원 외래키 추가
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name='product_seller')
 
     def __str__(self):
         return self.name
