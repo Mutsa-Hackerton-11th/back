@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from products.views import PopularProductView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/products/best-sellers/',PopularProductView.as_view(),name='popular-products'),
     path('accounts/', include('allauth.urls')),
 ]

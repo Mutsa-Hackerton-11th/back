@@ -10,12 +10,12 @@ class Seller(User):
     address = models.TextField()
     postal_code = models.CharField(max_length=10)
     phone_number = models.CharField(max_length=20)
-    certificate = models.ImageField(null=True)  # 업로드 위치 추가
-    copy_bankbook = models.ImageField(null=True)  # 업로드 위치 추가
-    company_url = models.URLField(null=True)
+    certificate = models.ImageField(blank=True,null=True)  # 업로드 위치 추가
+    copy_bankbook = models.ImageField(blank=True,null=True)  # 업로드 위치 추가
+    company_url = models.URLField(blank=True,null=True)
     is_approved = models.BooleanField(default=False)
-    company_image = models.ImageField(null=True)  # 업로드 위치 추가
-    company_info = models.TextField(null=True)
+    company_image = models.ImageField(blank=True,null=True)  # 업로드 위치 추가
+    company_info = models.TextField(blank=True,null=True)
 
     def __str__(self):
         return self.username

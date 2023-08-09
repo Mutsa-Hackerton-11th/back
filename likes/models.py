@@ -9,4 +9,4 @@ class Liked(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='liked_product')
 
     def __str__(self):
-        return f"{self.user.name} - {self.product.name}"
+        return f"{self.user} - {self.product}"
