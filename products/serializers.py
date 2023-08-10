@@ -20,8 +20,8 @@ class ProductColorSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
     seller = SellerSerializer()
-    sizes = ProductSizeSerializer(many=True)
-    colors = ProductColorSerializer(many=True)
+    sizes = ProductSizeSerializer(source='productsize_set', many=True)
+    colors = ProductColorSerializer(source='productcolor_set', many=True)
 
     class Meta:
         model = Product
