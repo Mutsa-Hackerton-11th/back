@@ -57,7 +57,6 @@ AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
@@ -84,7 +83,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.request',
             ],
         },
     },
@@ -101,7 +99,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mutsa',
         'USER': 'root',
-        'PASSWORD': 'seok4591',
+        'PASSWORD': 'peter0622',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -155,6 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
-LOGIN_REDIRECT_URL = 'main'
-ACCOUNT_LOGOUT_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/api/products/best-sellers/'
 ACCOUNT_LOGOUT_ON_GET = True 
+

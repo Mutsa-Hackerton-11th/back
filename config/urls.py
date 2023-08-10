@@ -20,6 +20,6 @@ from products.views import PopularProductView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/products/best-sellers/',PopularProductView.as_view(),name='popular-products'),
     path('accounts/', include('allauth.urls')),
+    path('api/products/best-sellers/',PopularProductView.as_view(),name='popular-products'),
 ]
