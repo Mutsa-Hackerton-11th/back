@@ -2,10 +2,12 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import F
 from .models import Product
 from sellers.models import Seller
 from .serializers import ProductSerializer
+from sellers.serializers import SellerSerializer
+
+import random
 
 """
 API명 : 인기상품목록조회API
@@ -121,3 +123,60 @@ class SearchProductsAPIView(APIView):
             response_data["searched_products"].append(search_product)
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+"""
+API명 : 쇼핑몰목록조회API
+설명 : 쇼핑몰 목록을 조회하는 API
+작성자 : 남석현
+"""
+class BrandListAPIView(APIView):
+    def get(self, request, format=None):
+        brands = Seller.objects.all()
+        serializer = SellerSerializer(brands, many=True)
+
+        shuffled_brands = random.sample(serializer.data, len(serializer.data))
+
+        response_data = {
+            "check": True,
+            "brands": []
+        }
+
+        for brannd_data in shuffled_brands:
+            brand = {
+                "seller_id": brannd_data["id"],
+                "company_name": brannd_data["company_name"],
+                # "seller_image": brannd_data["main_image"],
+                "seller_detail": brannd_data["company_info"]
+            }
+            response_data["brands"].append(brand)
+        return Response(response_data, status=status.HTTP_200_OK)
+        #추후구현 : try-catch로 응답 False일 경우도 구현
+
+"""
+API명 : 쇼핑몰별상품목록조회API
+설명 : 쇼핑몰별 상품을 조회하는 API
+작성자 : 남석현
+"""
+class BrandProductsAPIView(APIView):
+    def get(self, request, company_name, format=None):
+        brand = Seller.objects.get(company_name=company_name)
+        products = Product.objects.filter(seller=brand)
+        serializer = ProductSerializer(products, many=True)
+
+        response_data = {
+            "check": True,
+            "brand_products": []
+        }
+
+        for product in serializer.data:
+            brand_product= {
+                "product_id": product["id"],
+                "name": product["name"],
+                # "image": product["main_image"],
+                "shop_name": brand.company_name,
+                "like_counts": product["liked"]
+            }
+            response_data["brand_products"].append(brand_product)
+
+        return Response(response_data, status=status.HTTP_200_OK)
+        # 추후구현 : try-catch로 응답 False일 경우도 구현
