@@ -30,4 +30,4 @@ class KakaoSignInCallBackView(View):
 
         user_info_response = requests.get('https://kapi.kakao.com/v2/user/me', headers={"Authorization": f'Bearer ${access_token}'})
 
-        return JsonResponse({"token" : token_response.json()})
+        return JsonResponse(token_response.json())
