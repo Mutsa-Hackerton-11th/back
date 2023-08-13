@@ -97,10 +97,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mutsa',
-        'USER': 'root',
-        'PASSWORD': 'peter0622',
-        'HOST': '127.0.0.1',
+        'NAME': 'mutsa-db',
+        'USER': 'sh',
+        'PASSWORD': 'seok4591',
+        'HOST': 'mutsa-db.cszfp3a4or6x.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
