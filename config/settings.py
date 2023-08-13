@@ -99,7 +99,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mutsa',
         'USER': 'root',
-        'PASSWORD': 'seok4591',
+        'PASSWORD': 'peter0622',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -153,7 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/api/products/best-sellers/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/api/products/best-sellers/'
 ACCOUNT_LOGOUT_ON_GET = True 
 

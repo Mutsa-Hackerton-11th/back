@@ -22,6 +22,7 @@ from products.views import PopularProductView, NewProductView, CategoryProductsA
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
+    path('users/', include('users.urls')), 
     path('api/products/best-sellers/',PopularProductView.as_view(),name='popular-products'),
     path('api/products/new-sellers/', NewProductView.as_view(), name='new-products'),
     path('api/products/<str:category>/', CategoryProductsAPIView.as_view(), name='category-products'),
