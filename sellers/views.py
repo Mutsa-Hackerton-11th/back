@@ -14,7 +14,7 @@ class SellerSignUpView(View):
         try:
             seller = Seller.objects.get(username=sEmail)
             # 이미 등록된 기업 회원이면 로그인 화면으로 이동하도록 설정
-            return redirect('users:login')
+            return redirect('users:kakao-signin')
         except Seller.DoesNotExist:
             seller_data = {
                 'username': sEmail,
@@ -30,7 +30,7 @@ class SellerSignUpView(View):
             if serializer.is_valid():
                 serializer.save()
                 # 회원가입 성공 시 로그인 화면으로 이동하도록 설정
-                return redirect('users:login')
+                return redirect('users:kakao-signin')
             else:
                 # 유효성 검사에 실패한 경우 다시 회원가입 화면을 띄워줍니다.
-                return render(request, 'sellers/seller_signup.html', {'errors': serializer.errors})
+                return render(request, 'sellers:seller-signup', {'errors': serializer.errors})
