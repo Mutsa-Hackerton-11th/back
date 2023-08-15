@@ -2,9 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product
+from .models import Product, ProductSize, ProductColor
 from sellers.models import Seller
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, CategorySerializer
 from sellers.serializers import SellerSerializer
 
 import random
@@ -27,8 +27,9 @@ class PopularProductView(APIView):
         for product_data in serializer.data:
             popular_product = {
                 "product_id": product_data["id"],
-                "product_name": product_data["name"]
-                # "image": product_data["main_image"]
+                "product_name": product_data["name"],
+                "image": product_data["main_image"],
+                "product_price" : product_data["price"]
             }
             response_data["popular_products"].append(popular_product)
         return Response(response_data, status=status.HTTP_200_OK)
@@ -41,7 +42,7 @@ API명 : 신규상품목록조회API
 """
 class NewProductView(APIView):
     def get(self, request, format=None):
-        new_products = Product.objects.all().order_by('-uploaded_at')[:5] #상위 5개 상품
+        new_products = Product.objects.all().order_by('-uploaded_at')[:6] #상위 6개 상품
         serializer = ProductSerializer(new_products, many=True)
 
         response_data = {
@@ -52,8 +53,9 @@ class NewProductView(APIView):
         for product_data in serializer.data:
             new_product = {
                 "product_id": product_data["id"],
-                "product_name": product_data["name"]
-                # "image": product_data["main_image"]
+                "product_name": product_data["name"],
+                "image": product_data["main_image"],
+                "product_price": product_data["price"]
             }
             response_data["new_products"].append(new_product)
         return Response(response_data, status=status.HTTP_200_OK)
@@ -80,7 +82,8 @@ class CategoryProductsAPIView(APIView):
             category_product= {
                 "product_id": product["id"],
                 "name": product["name"],
-                # "image": product["main_image"],
+                "product_price": product["price"],
+                "image": product["main_image"],
                 "shop_name": seller.company_name,
                 "like_counts": product["liked"]
             }
@@ -116,7 +119,7 @@ class SearchProductsAPIView(APIView):
             search_product = {
                 "product_id": product["id"],
                 "name": product["name"],
-                # "image": product["main_image"],
+                "image": product["main_image"],
                 "shop_name": seller.company_name,
                 "like_counts": product["liked"]
             }
@@ -145,7 +148,7 @@ class BrandListAPIView(APIView):
             brand = {
                 "seller_id": brannd_data["id"],
                 "company_name": brannd_data["company_name"],
-                # "seller_image": brannd_data["main_image"],
+                "seller_image": brannd_data["company_image"],
                 "seller_detail": brannd_data["company_info"]
             }
             response_data["brands"].append(brand)
@@ -172,7 +175,8 @@ class BrandProductsAPIView(APIView):
             brand_product= {
                 "product_id": product["id"],
                 "name": product["name"],
-                # "image": product["main_image"],
+                "product_price": product["price"],
+                "image": product["main_image"],
                 "shop_name": brand.company_name,
                 "like_counts": product["liked"]
             }
@@ -180,3 +184,72 @@ class BrandProductsAPIView(APIView):
 
         return Response(response_data, status=status.HTTP_200_OK)
         # 추후구현 : try-catch로 응답 False일 경우도 구현
+
+class ProductDetailAPIView(APIView):
+    def get(self, request, pid):
+        try:
+            product = Product.objects.get(id=pid)
+            category = product.category.name
+            sizes = ProductSize.objects.filter(product=product)
+            colors = ProductColor.objects.filter(product=product)
+            serializer = ProductSerializer(product)
+        except Product.DoesNotExist:
+            return Response({"check": False, "message": "Product not found"}, status=404)
+
+        size_field = ["outer_size", "top_size", "shoes_size", "pants_size"]
+        category_size_field = f'{category}_size'
+
+        if category_size_field in size_field:
+            response_data = {
+                "check": True,
+                "product_id": product.id,
+                "product_name": product.name,
+                "image": serializer.data["main_image"] if serializer.data["main_image"] else "",
+                "shop_name": product.seller.company_name,
+                "price": product.price,
+                "rating": product.stars,
+                "category": category,
+                "size": [getattr(size, category_size_field) for size in sizes],
+                "color": [color.name for color in colors],
+                "details": product.detail,
+                "additional_img1": serializer.data["add_image_1"] if serializer.data["add_image_1"] else "",
+                "additional_img2": serializer.data["add_image_2"] if serializer.data["add_image_2"] else "",
+                "like_counts": product.liked,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        else:
+            response_data = {
+                "check": True,
+                "product_id": product.id,
+                "product_name": product.name,
+                "image": serializer.data["main_image"] if serializer.data["main_image"] else "",
+                "shop_name": product.seller.company_name,
+                "price": product.price,
+                "rating": product.stars,
+                "category": category,
+                "color": [color.name for color in colors],
+                "details": product.detail,
+                "additional_img1": serializer.data["add_image_1"] if serializer.data["add_image_1"] else "",
+                "additional_img2": serializer.data["add_image_2"] if serializer.data["add_image_2"] else "",
+                "like_counts": product.liked,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+
+class ProductOrderAPIView(APIView):
+    def get(self, request, pid, format=None):
+        try:
+            product = Product.objects.get(id=pid)
+        except Product.DoesNotExist:
+            return Response({"check": False, "message": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(product)
+
+        response_data = {
+            "check": True,
+            "product_id": serializer.data["id"],
+            "product_name": serializer.data["name"],
+            "image": serializer.data["main_image"],
+            "price": serializer.data["price"]
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)

@@ -31,7 +31,7 @@ class Product(models.Model):
 
 # ProductSize 클래스 : 상품사이즈 테이블
 class ProductSize(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="productsize_set")
     outer_size = models.CharField(max_length=10, blank=True, null=True)
     top_size = models.CharField(max_length=10, blank=True, null=True)
     shoes_size = models.CharField(max_length=10, blank=True, null=True)
@@ -42,7 +42,7 @@ class ProductSize(models.Model):
 
 # ProductColor 클래스 : 상품색상 테이블
 class ProductColor(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="productcolor_set")
     name = models.CharField(max_length=50)
 
     def __str__(self):

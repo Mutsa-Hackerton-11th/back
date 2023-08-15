@@ -14,10 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+
+from config import settings
 from products.views import PopularProductView, NewProductView, CategoryProductsAPIView,\
-    SearchProductsAPIView, BrandListAPIView, BrandProductsAPIView
+    SearchProductsAPIView, BrandListAPIView, BrandProductsAPIView, ProductDetailAPIView,\
+    ProductOrderAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +34,10 @@ urlpatterns = [
     path('api/products/search/', SearchProductsAPIView.as_view(), name='search-products'),
     path('api/brands/', BrandListAPIView.as_view(), name='brands'),
     path('api/brands/<str:company_name>/', BrandProductsAPIView.as_view(), name='brand-product'),
-
+    path('api/products/detail/<str:pid>/', ProductDetailAPIView.as_view(), name='product-detail'),
+    path('api/products/order/<str:pid>/', ProductOrderAPIView.as_view(), name='product-orderview'),
 ]
+
+
+#이미지 전송관련 url
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
