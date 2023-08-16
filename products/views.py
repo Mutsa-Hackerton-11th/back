@@ -16,7 +16,7 @@ API명 : 인기상품목록조회API
 """
 class PopularProductView(APIView):
     def get(self, request, format=None):
-        popular_products = Product.objects.all().order_by('-sold')[:5] #상위 5개 상품
+        popular_products = Product.objects.all().order_by('-sold')[:6] #상위 6개 상품
         serializer = ProductSerializer(popular_products, many=True)
 
         response_data = {
@@ -29,7 +29,8 @@ class PopularProductView(APIView):
                 "product_id": product_data["id"],
                 "product_name": product_data["name"],
                 "image": product_data["main_image"],
-                "product_price" : product_data["price"]
+                "product_price" : product_data["price"],
+                "like_counts": product_data["liked"]
             }
             response_data["popular_products"].append(popular_product)
         return Response(response_data, status=status.HTTP_200_OK)
@@ -55,7 +56,8 @@ class NewProductView(APIView):
                 "product_id": product_data["id"],
                 "product_name": product_data["name"],
                 "image": product_data["main_image"],
-                "product_price": product_data["price"]
+                "product_price": product_data["price"],
+                "like_counts": product_data["liked"]
             }
             response_data["new_products"].append(new_product)
         return Response(response_data, status=status.HTTP_200_OK)
@@ -73,7 +75,7 @@ class CategoryProductsAPIView(APIView):
 
         response_data = {
             "check": True,
-            f"{category}_products": []
+            "products": []
         }
 
         for product in serializer.data:
@@ -87,7 +89,7 @@ class CategoryProductsAPIView(APIView):
                 "shop_name": seller.company_name,
                 "like_counts": product["liked"]
             }
-            response_data[f"{category}_products"].append(category_product)
+            response_data["products"].append(category_product)
 
         return Response(response_data, status=status.HTTP_200_OK)
         # 추후구현 : try-catch로 응답 False일 경우도 구현
@@ -168,7 +170,8 @@ class BrandProductsAPIView(APIView):
 
         response_data = {
             "check": True,
-            "brand_products": []
+            "products": [],
+            "categorys": []
         }
 
         for product in serializer.data:
@@ -180,11 +183,17 @@ class BrandProductsAPIView(APIView):
                 "shop_name": brand.company_name,
                 "like_counts": product["liked"]
             }
-            response_data["brand_products"].append(brand_product)
+            response_data["products"].append(brand_product)
+            response_data["categorys"].append(product["category"]["name"])
 
         return Response(response_data, status=status.HTTP_200_OK)
         # 추후구현 : try-catch로 응답 False일 경우도 구현
 
+"""
+API명 : 상품상세내용조회API
+설명 : 상품의 상세내용을 조회하는 API
+작성자 : 남석현
+"""
 class ProductDetailAPIView(APIView):
     def get(self, request, pid):
         try:
@@ -235,6 +244,11 @@ class ProductDetailAPIView(APIView):
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
+"""
+API명 : 상품주문화면API
+설명 : 상품의 주문화면에 들어갈 내용을 조회하는 API
+작성자 : 남석현
+"""
 class ProductOrderAPIView(APIView):
     def get(self, request, pid, format=None):
         try:
