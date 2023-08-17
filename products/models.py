@@ -18,6 +18,8 @@ class Product(models.Model):
     main_image = models.ImageField(blank=True,null=True)
     add_image_1 = models.ImageField(blank=True,null=True)
     add_image_2 = models.ImageField(blank=True,null=True)
+    add_image_3 = models.ImageField(blank=True,null=True)
+    simple_info = models.CharField(max_length=100, blank=True, null=True)
     detail = models.TextField()
     uploaded_at = models.DateTimeField()
     sold = models.IntegerField(blank=True, null=True)
@@ -25,6 +27,7 @@ class Product(models.Model):
     liked = models.IntegerField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name='product_seller')
+    deliver_price = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.name
