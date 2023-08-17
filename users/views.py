@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
 import requests
+from .models import User
 
 class KakaoSignInView(View):
     def get(self, request):
@@ -28,6 +29,17 @@ class KakaoSignInCallBackView(View):
 
         access_token = token_response.json().get('access_token')
 
-        user_info_response = requests.get('https://kapi.kakao.com/v2/user/me', headers={"Authorization": f'Bearer ${access_token}'})
+        user_info_response = requests.get('https://kapi.kakao.com/v2/user/me', headers={"Authorization": f'Bearer {access_token}'})
 
-        return JsonResponse({"user_info": user_info_response.json()})
+        user_info_json = user_info_response.json()
+        kakao_id = user_info_json.get('id')
+
+        # 데이터베이스에서 kakao_id 사용자를 확인합니다.
+        try:
+            user = User.objects.get(kakao_id=kakao_id)
+        except User.DoesNotExist:
+            # 회원가입 페이지로  리다이렉트되며, 끝 지점에 kakao_id를 쿼리 매개 변수로 첨부합니다.
+            return redirect(f'https://example.com/signup-page?kakao_id={kakao_id}')
+
+        # JsonResponse를 사용하여 kakao_id를 프론트엔드로 보내줍니다.
+        return JsonResponse({"kakao_id": kakao_id})
