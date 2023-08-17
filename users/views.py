@@ -6,7 +6,7 @@ import requests
 class KakaoSignInView(View):
     def get(self, request):
         app_key = 'a1a341e711531afc648d821e7e1129f9'
-        redirect_uri = 'http://localhost:8000/users/signin/kakao/callback'
+        redirect_uri = 'http://15.164.56.204:8000/users/signin/kakao/callback'
         kakao_auth_api = 'https://kauth.kakao.com/oauth/authorize?response_type=code'
 
         return redirect (
@@ -20,7 +20,7 @@ class KakaoSignInCallBackView(View):
         data = {
             'grant_type' : 'authorization_code',
             'client_id' : 'a1a341e711531afc648d821e7e1129f9',
-            'redirection_uri' : 'http://localhost:8000/users/signin/kakao/callback',
+            'redirection_uri' : 'http://15.164.56.204:8000/users/signin/kakao/callback/',
             'code' : auth_code,
         }
 
@@ -30,4 +30,4 @@ class KakaoSignInCallBackView(View):
 
         user_info_response = requests.get('https://kapi.kakao.com/v2/user/me', headers={"Authorization": f'Bearer ${access_token}'})
 
-        return JsonResponse(token_response.json())
+        return JsonResponse({"user_info": user_info_response.json()})
