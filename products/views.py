@@ -8,6 +8,7 @@ from .serializers import ProductSerializer, CategorySerializer
 from sellers.serializers import SellerSerializer
 
 import random
+import datetime
 
 """
 API명 : 인기상품목록조회API
@@ -30,9 +31,11 @@ class PopularProductView(APIView):
                 "product_name": product_data["name"],
                 "image": product_data["main_image"],
                 "product_price" : product_data["price"],
-                "like_counts": product_data["liked"]
+                "like_counts": product_data["liked"],
+                "category": product_data["category"]["name"]
             }
             response_data["popular_products"].append(popular_product)
+
         return Response(response_data, status=status.HTTP_200_OK)
         #추후구현 : try-catch로 응답 False일 경우도 구현
 
@@ -57,7 +60,8 @@ class NewProductView(APIView):
                 "product_name": product_data["name"],
                 "image": product_data["main_image"],
                 "product_price": product_data["price"],
-                "like_counts": product_data["liked"]
+                "like_counts": product_data["liked"],
+                "category": product_data["category"]["name"],
             }
             response_data["new_products"].append(new_product)
         return Response(response_data, status=status.HTTP_200_OK)
@@ -87,9 +91,17 @@ class CategoryProductsAPIView(APIView):
                 "product_price": product["price"],
                 "image": product["main_image"],
                 "shop_name": seller.company_name,
-                "like_counts": product["liked"]
+                "like_counts": product["liked"],
+                "category": product["category"]["name"],
+                "keyword": product["simple_info"]
+
             }
             response_data["products"].append(category_product)
+            # hot, new 추가
+            if product["sold"] > 100:
+                category_product["hot"] = True
+            if (datetime.datetime.now().day - datetime.datetime.strptime(product["uploaded_at"], '%Y-%m-%dT%H:%M:%S%z').day) < 7:
+                category_product["new"] = True
 
         return Response(response_data, status=status.HTTP_200_OK)
         # 추후구현 : try-catch로 응답 False일 경우도 구현
@@ -181,10 +193,17 @@ class BrandProductsAPIView(APIView):
                 "product_price": product["price"],
                 "image": product["main_image"],
                 "shop_name": brand.company_name,
-                "like_counts": product["liked"]
+                "like_counts": product["liked"],
+                "category": product["category"]["name"],
+                "keyword": product["simple_info"]
+
             }
             response_data["products"].append(brand_product)
             response_data["categorys"].append(product["category"]["name"])
+            if product["sold"] > 100:
+                brand_product["hot"] = True
+            if (datetime.datetime.now().day - datetime.datetime.strptime(product["uploaded_at"], '%Y-%m-%dT%H:%M:%S%z').day) < 7:
+                brand_product["new"] = True
 
         return Response(response_data, status=status.HTTP_200_OK)
         # 추후구현 : try-catch로 응답 False일 경우도 구현
@@ -213,16 +232,15 @@ class ProductDetailAPIView(APIView):
                 "check": True,
                 "product_id": product.id,
                 "product_name": product.name,
-                "image": serializer.data["main_image"] if serializer.data["main_image"] else "",
+                "images": [serializer.data["main_image"],serializer.data["add_image_1"],serializer.data["add_image_2"],serializer.data["add_image_3"]],
                 "shop_name": product.seller.company_name,
                 "price": product.price,
                 "rating": product.stars,
                 "category": category,
                 "size": [getattr(size, category_size_field) for size in sizes],
                 "color": [color.name for color in colors],
-                "details": product.detail,
-                "additional_img1": serializer.data["add_image_1"] if serializer.data["add_image_1"] else "",
-                "additional_img2": serializer.data["add_image_2"] if serializer.data["add_image_2"] else "",
+                "keyword": product.simple_info,
+                "details": [product.detail_1,product.detail_2],
                 "like_counts": product.liked,
             }
             return Response(response_data, status=status.HTTP_200_OK)
@@ -231,15 +249,13 @@ class ProductDetailAPIView(APIView):
                 "check": True,
                 "product_id": product.id,
                 "product_name": product.name,
-                "image": serializer.data["main_image"] if serializer.data["main_image"] else "",
+                "images": [serializer.data["main_image"],serializer.data["add_image_1"],serializer.data["add_image_2"],serializer.data["add_image_3"]],
                 "shop_name": product.seller.company_name,
                 "price": product.price,
                 "rating": product.stars,
                 "category": category,
                 "color": [color.name for color in colors],
                 "details": product.detail,
-                "additional_img1": serializer.data["add_image_1"] if serializer.data["add_image_1"] else "",
-                "additional_img2": serializer.data["add_image_2"] if serializer.data["add_image_2"] else "",
                 "like_counts": product.liked,
             }
             return Response(response_data, status=status.HTTP_200_OK)
