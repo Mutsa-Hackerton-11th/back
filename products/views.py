@@ -29,7 +29,7 @@ class PopularProductView(APIView):
             popular_product = {
                 "product_id": product_data["id"],
                 "product_name": product_data["name"],
-                "image": product_data["main_image"],
+                "images": [product_data["main_image"],product_data["add_image_1"]],
                 "product_price" : product_data["price"],
                 "like_counts": product_data["liked"],
                 "category": product_data["category"]["name"]
@@ -58,7 +58,7 @@ class NewProductView(APIView):
             new_product = {
                 "product_id": product_data["id"],
                 "product_name": product_data["name"],
-                "image": product_data["main_image"],
+                "images": [product_data["main_image"],product_data["add_image_1"]],
                 "product_price": product_data["price"],
                 "like_counts": product_data["liked"],
                 "category": product_data["category"]["name"],
