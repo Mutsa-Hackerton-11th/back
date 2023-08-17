@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
+from rest_framework.response import Response
 import requests
 from .models import User
 
@@ -39,7 +40,7 @@ class KakaoSignInCallBackView(View):
             user = User.objects.get(kakao_id=kakao_id)
         except User.DoesNotExist:
             # 사용자 정보가 없다면 회원가입 페이지로  리다이렉트되며, 끝 지점에 kakao_id를 쿼리 매개 변수로 첨부합니다.
-            return redirect(f'http://15.164.56.204:8000/signup?kakao_id={kakao_id}')
+            return Response({"kakao_id": kakao_id})
 
         # 사용자 정보가 있다면 JsonResponse를 사용하여 kakao_id를 프론트엔드로 보내줍니다.
         return JsonResponse({"kakao_id": kakao_id})

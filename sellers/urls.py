@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from users.views import KakaoSignInView, KakaoSignInCallBackView
-from .views import SellerSignUpView, SellerSignUpAPIView
+from .views import  SellerSignUpAPIView
 
 urlpatterns = [
     path('signin/kakao/', KakaoSignInView.as_view(), name='kakao-signin'),
