@@ -255,7 +255,7 @@ class ProductDetailAPIView(APIView):
                 "rating": product.stars,
                 "category": category,
                 "color": [color.name for color in colors],
-                "details": product.detail,
+                "details": [product.detail_1,product.detail_2],
                 "like_counts": product.liked,
             }
             return Response(response_data, status=status.HTTP_200_OK)
