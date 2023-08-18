@@ -224,7 +224,7 @@ class ProductDetailAPIView(APIView):
         except Product.DoesNotExist:
             return Response({"check": False, "message": "Product not found"}, status=404)
 
-        size_field = ["outer_size", "top_size", "shoes_size", "pants_size"]
+        size_field = ["아우터_size", "상의_size", "신발_size", "하의_size"]
         category_size_field = f'{category}_size'
 
         if category_size_field in size_field:
