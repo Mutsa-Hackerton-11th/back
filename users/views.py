@@ -25,21 +25,16 @@ class KakaoSignInCallBackView(View):
         data = {
             'grant_type': 'authorization_code',
             'client_id': 'a1a341e711531afc648d821e7e1129f9',
-            'redirect_uri': 'http://localhost:3000/users/signin/kakao/callback-api',
+            'redirect_uri': 'http://localhost:3000/login',
             'code': auth_code
         }
 
-        token_response = requests.post(kakao_token_api,data=data)
-        print(token_response)
+        token_response = requests.post(kakao_token_api, data=data)
         access_token=token_response.json()["access_token"]
-        print(1)
-
         user_info_response = requests.get('https://kapi.kakao.com/v2/user/me', headers={"Authorization": f'Bearer {access_token}'})
 
         user_info_json = user_info_response.json()
-        print(user_info_json)
         kakao_id = user_info_json["id"]
-        print(kakao_id)
 
         try:
             # 데이터베이스에서 kakao_id로 사용자 조회
