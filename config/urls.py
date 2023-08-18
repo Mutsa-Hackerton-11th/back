@@ -25,7 +25,7 @@ from products.views import PopularProductView, NewProductView, CategoryProductsA
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
+    # path('accounts/', include('allauth.urls')),
     path('users/', include('users.urls')), 
     path('sellers/', include('sellers.urls')), 
     path('api/products/best-sellers/',PopularProductView.as_view(),name='popular-products'),
