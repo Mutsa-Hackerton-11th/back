@@ -17,7 +17,7 @@ API명 : 인기상품목록조회API
 """
 class PopularProductView(APIView):
     def get(self, request, format=None):
-        popular_products = Product.objects.all().order_by('-sold')[:6] #상위 6개 상품
+        popular_products = Product.objects.all().order_by('-sold')[:-1]
         serializer = ProductSerializer(popular_products, many=True)
 
         response_data = {
@@ -46,7 +46,7 @@ API명 : 신규상품목록조회API
 """
 class NewProductView(APIView):
     def get(self, request, format=None):
-        new_products = Product.objects.all().order_by('-uploaded_at')[:6] #상위 6개 상품
+        new_products = Product.objects.all().order_by('-uploaded_at')[:-1] #상위 6개 상품
         serializer = ProductSerializer(new_products, many=True)
 
         response_data = {
