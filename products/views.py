@@ -183,7 +183,7 @@ class BrandProductsAPIView(APIView):
         response_data = {
             "check": True,
             "products": [],
-            "categorys": []
+            "categorys": set()
         }
 
         for product in serializer.data:
@@ -199,7 +199,7 @@ class BrandProductsAPIView(APIView):
 
             }
             response_data["products"].append(brand_product)
-            response_data["categorys"].append(product["category"]["name"])
+            response_data["categorys"].add(product["category"]["name"])
             if product["sold"] > 100:
                 brand_product["hot"] = True
             if (datetime.datetime.now().day - datetime.datetime.strptime(product["uploaded_at"], '%Y-%m-%dT%H:%M:%S%z').day) < 7:
