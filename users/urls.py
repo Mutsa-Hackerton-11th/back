@@ -4,5 +4,5 @@ from .views import KakaoSignInView, KakaoSignInCallBackView
 
 urlpatterns = [
     path('signin/kakao/', KakaoSignInView.as_view(), name='kakao-signin'),
-    path('signin/kakao/callback/', KakaoSignInCallBackView.as_view(), name='kakao-callback'),
+    path('signin/kakao/callback', KakaoSignInCallBackView.as_view(), name='kakao-callback'),
 ]
