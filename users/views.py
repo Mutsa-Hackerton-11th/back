@@ -34,15 +34,17 @@ class KakaoSignInCallBackView(View):
         user_info_response = requests.get('https://kapi.kakao.com/v2/user/me', headers={"Authorization": f'Bearer {access_token}'})
 
         user_info_json = user_info_response.json()
+        kakao_name= user_info_json["properties"]["nickname"]
+        print(kakao_name)
+        # kakao_name= user_info_json["properties"].json()["nickname"]
         kakao_id = user_info_json["id"]
 
         try:
             # 데이터베이스에서 kakao_id로 사용자 조회
             user = User.objects.get(kakao_id=kakao_id)
-            is_user = True
         except User.DoesNotExist:
             # 사용자가 없으면 데이터베이스에 등록
-            user = User.objects.create(kakao_id=kakao_id)
+            user = User.objects.create(kakao_id=kakao_id,username=kakao_name)
             is_user = False
 
         # SimpleJWT를 사용하여 JWT 토큰 생성
