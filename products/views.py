@@ -26,13 +26,17 @@ class PopularProductView(APIView):
         }
 
         for product_data in serializer.data:
+            seller_id = product_data['seller']['id']  # 외래기 id값 받아오기
+            seller = Seller.objects.get(id=seller_id)
             popular_product = {
                 "product_id": product_data["id"],
                 "product_name": product_data["name"],
+                "shop_name": seller.company_name,
                 "images": [product_data["main_image"],product_data["add_image_1"]],
                 "product_price" : product_data["price"],
                 "like_counts": product_data["liked"],
-                "category": product_data["category"]["name"]
+                "category": product_data["category"]["name"],
+                "keyword": product_data["simple_info"]
             }
             response_data["popular_products"].append(popular_product)
 
@@ -48,20 +52,23 @@ class NewProductView(APIView):
     def get(self, request, format=None):
         new_products = Product.objects.all().order_by('-uploaded_at')
         serializer = ProductSerializer(new_products, many=True)
-
         response_data = {
             "check": True,
             "new_products": []
         }
 
         for product_data in serializer.data:
+            seller_id = product_data['seller']['id']  # 외래기 id값 받아오기
+            seller = Seller.objects.get(id=seller_id)
             new_product = {
                 "product_id": product_data["id"],
                 "product_name": product_data["name"],
+                "shop_name": seller.company_name,
                 "images": [product_data["main_image"],product_data["add_image_1"]],
-                "product_price": product_data["price"],
+                "product_price" : product_data["price"],
                 "like_counts": product_data["liked"],
                 "category": product_data["category"]["name"],
+                "keyword": product_data["simple_info"]
             }
             response_data["new_products"].append(new_product)
         return Response(response_data, status=status.HTTP_200_OK)
