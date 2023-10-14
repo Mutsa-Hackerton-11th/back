@@ -21,3 +21,4 @@ typing_extensions==4.7.1
 urllib3==2.0.4
 django-cors-headers
 mysqlclient
+Pillow
