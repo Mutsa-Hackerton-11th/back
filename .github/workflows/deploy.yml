@@ -42,4 +42,5 @@ jobs:
           --application-name $AWS_APPLICATION_NAME \
           --deployment-group-name $AWS_DEPLOYMENT_GROUP \
           --file-exists-behavior OVERWRITE \
+          --s3-location bucket=mutsa-s3-bucket,bundleType=zip,key=mutsa.zip \
           --region ap-northeast-2
