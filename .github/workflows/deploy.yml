@@ -1,0 +1,46 @@
+name: Django CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10.12  # 사용할 Python 버전 선택
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Tests
+      run: |
+        python manage.py test
+
+    - name: Deploy to AWS CodeDeploy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_APPLICATION_NAME: autodeploy
+        AWS_DEPLOYMENT_GROUP: autoDeployGroup
+
+      run: |
+        aws deploy create-deployment \
+          --application-name $AWS_APPLICATION_NAME \
+          --deployment-group-name $AWS_DEPLOYMENT_GROUP \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=mutsa-s3-bucket,bundleType=zip,key=mutsa.zip \
+          --region ap-northeast-2
