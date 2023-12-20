@@ -30,6 +30,13 @@ jobs:
       run: |
         python manage.py test
 
+    - name: Upload to S3
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        aws s3 cp . s3://mutsa-s3-bucket/ --recursive --exclude "*" --include "mutsa.zip"
+
     - name: Deploy to AWS CodeDeploy
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
